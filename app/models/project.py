@@ -1,14 +1,17 @@
-# from sqlmodel import SQLModel
-from dataclasses import Field
-from typing import Optional
+#Project model
+from datetime import datetime
+import uuid
 
-from sqlmodel import SQLModel
+from sqlalchemy import Column, String, DateTime, Text
+from sqlalchemy.dialects.postgresql import UUID
 
-import app.db
+from app.db import Base
 
 
-class Project(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
+class Project(Base):
+    __tablename__ = "projects"
 
-from sqlmodel import create_engine
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False, index=True)
+    description = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
