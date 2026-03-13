@@ -12,7 +12,7 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 db_username = os.getenv("DATABASE_USERNAME")
 db_password = os.getenv("DATABASE_PASSWORD")
 
-DATABASE_URL = f"postgresql://{db_username}:{db_password}@localhost:5432/projectdb"
+DATABASE_URL = "sqlite+aisqlite:///./test.db"
 
 class Post(DeclarativeBase):
     __tablename__ = "posts"
