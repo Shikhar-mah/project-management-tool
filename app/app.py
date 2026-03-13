@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from app.schemas import PostCreate, PostResponse
-from app.db import Post, create_db_and_table, get_async_session
+# from app.db import Post, create_db_and_table, get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 
