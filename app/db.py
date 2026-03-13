@@ -1,45 +1,33 @@
-import os
-from collections.abc import AsyncGenerator
-from dotenv import load_dotenv
+## This file must define 3 things
+#1. engine
+#2. sessionmaker
+#3. Base
 
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    create_async_engine,
-    async_sessionmaker
-)
-from sqlalchemy.orm import DeclarativeBase
+# Import these following libraries
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Loading Environmental variables
-load_dotenv()
+from app.config import DATABASE_URL
 
-# Read values from .env
-DB_USERNAME = os.getenv("DATABASE_USERNAME")
-DB_PASSWORD = os.getenv("DATABASE_PASSWORD")
-DB_HOST = os.getenv("DATABASE_HOST")
-DB_PORT = os.getenv("DATABASE_PORT")
-DB_NAME = os.getenv("DATABASE_NAME")
+# Step 1: Engine
+# Engine is the connection to PostgreSQL
+engine = create_engine(DATABASE_URL)
 
-# Database URL
-DATABASE_URL = (
-    f"postgresql+asyncpg://{DB_USERNAME}:{DB_PASSWORD}"
-    f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+# Step 2: Session Local
+# This creates database sessions per request
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
 )
 
-# Create async engine
-engine = create_async_engine(DATABASE_URL, echo=True)
+# Step 3: Base
+# Every model will inherit this
+Base = declarative_base()
 
-# Session factory
-async_session_maker = async_sessionmaker(
-    engine,
-    expire_on_commit=False
-)
-
-# Base class for models
-class Base(DeclarativeBase):
-    pass
-
-
-# Dependency / session provider
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
