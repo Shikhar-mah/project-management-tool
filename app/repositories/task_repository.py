@@ -31,7 +31,7 @@ class TaskRepository:
         return task
 
     def delete(self, task_id: UUID):
-        task = self.get_task_by_id(task_id)
+        task = self.get_by_id(task_id)
         if not task:
             return None
 

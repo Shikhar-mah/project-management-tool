@@ -31,7 +31,7 @@ class CommentRepository:
         return comment
 
     def delete(self, comment_id: UUID):
-        comment = self.get_comment_by_id(comment_id)
+        comment = self.get_by_id(comment_id)
 
         if not comment:
             return None
