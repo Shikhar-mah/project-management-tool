@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -15,7 +16,7 @@ class UserRepository:
         self.session.refresh(user)
         return user
 
-    def get_by_id(self, user_id: UUID):
+    def get_by_id(self, user_id: UUID) -> Optional[User]:
         return (
             self.session.query(User)
             .filter(User.id == user_id)

@@ -18,14 +18,22 @@ class TaskRepository:
     def get_all(self):
         return self.session.query(Task).all()
 
-    def get_task_by_id(self, task_id: UUID):
+    def get_by_id(self, task_id: UUID):
         return (
             self.session.query(Task)
             .filter(Task.id == task_id)
             .first()
         )
 
-    def update(self, task: Task):
+    def update(self, task_id: UUID, updated_data: dict):
+        task = self.get_by_id(task_id)
+
+        if not task:
+            return None
+
+        for key, value in updated_data.items():
+            setattr(task, key, value)
+
         self.session.commit()
         self.session.refresh(task)
         return task

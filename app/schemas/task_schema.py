@@ -28,7 +28,9 @@ class TaskResponse(BaseModel):
     status: Status
     priority: Priority
     project_id: UUID
+    # project_name: str
     assignee_id: UUID
+    # assignee_name: str
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
