@@ -30,7 +30,7 @@ def get_all(
     return service.get_all()
 
 
-@router.get("/project/{id}")
+@router.get("/project/{project_id}")
 def get_by_id(
         project_id: UUID,
         db: Session = Depends(get_db)
@@ -39,17 +39,18 @@ def get_by_id(
     service = ProjectService(repo)
     return service.get_by_id(project_id)
 
-@router.post(f"/project/{id}")
+@router.put("/project/{project_id}")
 def update(
         data: ProjectUpdate,
+        project_id: UUID,
         db: Session = Depends(get_db)
 ):
     repo = ProjectRepository(db)
     service = ProjectService(repo)
-    return service.update(data)
+    return service.update(id, data)
 
 
-@router.post(f"/project/{id}")
+@router.delete("/project/{project_id}")
 def delete(
         project_id: UUID,
         db: Session = Depends(get_db)

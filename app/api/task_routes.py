@@ -4,7 +4,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db import get_db
+from app.repositories.project_repository import ProjectRepository
 from app.repositories.task_repository import TaskRepository
+from app.repositories.user_repository import UserRepository
 from app.schemas.task_schema import TaskCreate, TaskUpdate
 from app.services.task_service import TaskService
 
@@ -15,8 +17,10 @@ def create_task(
         data: TaskCreate,
         db: Session = Depends(get_db)
 ):
-    repo = TaskRepository(db)
-    service = TaskService(repo)
+    repo_task = TaskRepository(db)
+    repo_project = ProjectRepository(db)
+    repo_user = UserRepository(db)
+    service = TaskService(repo_task, repo_project, repo_user)
     return service.create_task(data)
 
 
@@ -24,35 +28,44 @@ def create_task(
 def get_all(
         db: Session = Depends(get_db)
 ):
-    repo = TaskRepository(db)
-    service = TaskService(repo)
+    repo_task = TaskRepository(db)
+    repo_project = ProjectRepository(db)
+    repo_user = UserRepository(db)
+    service = TaskService(repo_task, repo_project, repo_user)
     return service.get_all()
 
 
-@router.get("/task/{id}")
+@router.get("/task/{task_id}")
 def get_by_id(
         task_id: UUID,
         db: Session = Depends(get_db)
 ):
-    repo = TaskRepository(db)
-    service = TaskService(repo)
+    repo_task = TaskRepository(db)
+    repo_project = ProjectRepository(db)
+    repo_user = UserRepository(db)
+    service = TaskService(repo_task, repo_project, repo_user)
     return service.get_by_id(task_id)
 
-@router.post("/task/{id}")
+@router.put("/task/{task_id}")
 def update(
         data: TaskUpdate,
+        task_id: UUID,
         db: Session = Depends(get_db)
 ):
-    repo = TaskRepository(db)
-    service = TaskService(repo)
-    return service.update(data)
+    repo_task = TaskRepository(db)
+    repo_project = ProjectRepository(db)
+    repo_user = UserRepository(db)
+    service = TaskService(repo_task, repo_project, repo_user)
+    return service.update(task_id, data)
 
 
-@router.post("/task/{id}")
+@router.delete("/task/{task_id}")
 def delete(
         task_id: UUID,
         db: Session = Depends(get_db)
 ):
-    repo = TaskRepository(db)
-    service = TaskService(repo)
+    repo_task = TaskRepository(db)
+    repo_project = ProjectRepository(db)
+    repo_user = UserRepository(db)
+    service = TaskService(repo_task, repo_project, repo_user)
     return service.delete(task_id)

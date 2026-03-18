@@ -29,7 +29,7 @@ def get_all(
     return service.get_all()
 
 
-@router.get("/user/{id}")
+@router.get("/user/{user_id}")
 def get_by_id(
         user_id: UUID,
         db: Session = Depends(get_db)
@@ -39,7 +39,7 @@ def get_by_id(
     return service.get_by_id(user_id)
 
 
-@router.post("/user/{id}")
+@router.delete("/user/{user_id}")
 def delete(
         user_id: UUID,
         db: Session = Depends(get_db)

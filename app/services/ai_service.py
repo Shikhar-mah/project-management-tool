@@ -58,5 +58,5 @@ def suggest_priority(title: str, description: str) -> Priority:
         "MEDIUM": Priority.medium,
         "HIGH": Priority.high
     }
-    logging.info("Priority Declared. Set to: " + mapping.get(priority_str, Priority.medium))
+    logging.info(f"Priority Declared. Set to: {mapping.get(priority_str, Priority.medium)}")
     return mapping.get(priority_str, Priority.medium)
