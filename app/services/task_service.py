@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -7,7 +8,7 @@ from app.repositories.project_repository import ProjectRepository
 from app.repositories.task_repository import TaskRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse
-from app.services.ai_service import generate_description
+from app.services.ai_service import generate_description, suggest_priority
 from app.utils.enums import Status
 
 
@@ -94,15 +95,13 @@ class TaskService:
     4. it's better to create a function specifically for the task of updating the
         the description
     """
-    def description_generator(self, task_id: UUID):
+    def description_generator_priority(self, task_id: UUID):
         task = self.get_by_id(task_id)
-        task_response = TaskResponse.model_validate(task)
-        task_response.description = generate_description(task_response.title)
+        task_update = TaskUpdate.model_validate(task)
+        task_update.description = generate_description(task_update.title)
+        task_update.priority = suggest_priority(task_update.title, task_update.description)
 
-        self.update(task_id, task_response)
-
-
-
+        self.update(task_id, task_update)
 
 
 

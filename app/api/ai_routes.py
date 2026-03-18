@@ -23,3 +23,14 @@ def generate_description(
 
     return {"message": "The description is generated successfully"}
 
+@router.post("/ai/priority")
+def assign_priority(
+    task_id: UUID,
+    db: Session = Depends(get_db)
+):
+    repo = TaskRepository(db)
+    service = TaskService(repo)
+
+    service.description_generator_priority(task_id)
+
+    return {"message": "The description and priority is generated successfully"}
