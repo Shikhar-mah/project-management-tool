@@ -10,7 +10,7 @@ from app.utils.enums import Status, Priority
 class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
-    priority: Priority
+    priority: Optional[Priority] = None
     project_id: UUID
     assignee_id: UUID
 
@@ -26,7 +26,7 @@ class TaskResponse(BaseModel):
     title: str
     description: Optional[str] = None
     status: Status
-    priority: Priority
+    priority: Optional[Priority] = None
     project_id: UUID
     # project_name: str
     assignee_id: UUID

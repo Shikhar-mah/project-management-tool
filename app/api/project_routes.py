@@ -47,7 +47,7 @@ def update(
 ):
     repo = ProjectRepository(db)
     service = ProjectService(repo)
-    return service.update(id, data)
+    return service.update(project_id, data)
 
 
 @router.delete("/project/{project_id}")

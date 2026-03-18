@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime
-
 from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -14,7 +13,7 @@ class Task(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(Enum(Status), nullable=False, default=Status.todo)
+    status = Column(Enum(Status), nullable=False)
     priority = Column(Enum(Priority), nullable=True)
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"))
     assignee_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))

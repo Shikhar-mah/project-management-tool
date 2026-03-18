@@ -97,9 +97,11 @@ class TaskService:
     """
     def description_generator_priority(self, task_id: UUID):
         task = self.get_by_id(task_id)
-        task_update = TaskUpdate.model_validate(task)
-        task_update.description = generate_description(task_update.title)
-        task_update.priority = suggest_priority(task_update.title, task_update.description)
+
+        task_update = TaskUpdate(
+            description=generate_description(task.title),
+            priority=suggest_priority(task.title, task.description)
+        )
 
         self.update(task_id, task_update)
 
