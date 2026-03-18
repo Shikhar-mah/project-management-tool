@@ -13,7 +13,7 @@ class UserService:
         self.repo = repo
 
 
-    def create_project(self, user_data: UserCreate):
+    def create_user(self, user_data: UserCreate):
         new_user = User(**user_data.model_dump())
         return UserResponse.model_validate(self.repo.create(new_user))
 
@@ -24,7 +24,7 @@ class UserService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Project not found"
+                detail="User not found"
             )
 
         return UserResponse.model_validate(user)

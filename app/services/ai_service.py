@@ -2,7 +2,7 @@ import os
 from openai import OpenAI
 from app.utils.enums import Priority
 from app.config import API_KEY
-
+import logging
 api_key = API_KEY
 
 if not api_key:
@@ -13,8 +13,10 @@ client = OpenAI(
   api_key=api_key,
 )
 
-print("after api key")
+#Logging for better debugging
+logging.info("AI service Initialization")
 
+logging.info("Generating description...")
 def generate_description(title: str) -> str:
     response = client.chat.completions.create(
         model="arcee-ai/trinity-large-preview:free",
@@ -28,8 +30,9 @@ def generate_description(title: str) -> str:
     )
     return response.choices[0].message.content
 
+logging.info("Description Generated.")
 
-
+logging.info("Declaring Priority...")
 def suggest_priority(title: str, description: str) -> Priority:
     response = client.chat.completions.create(
         model="arcee-ai/trinity-large-preview:free",
@@ -49,4 +52,11 @@ def suggest_priority(title: str, description: str) -> Priority:
     )
 
     priority_str = response.choices[0].message.content.strip().upper()
-    return Priority[priority_str.lower()]
+
+    mapping = {
+        "LOW": Priority.low,
+        "MEDIUM": Priority.medium,
+        "HIGH": Priority.high
+    }
+    logging.info("Priority Declared. Set to: " + mapping.get(priority_str, Priority.medium))
+    return mapping.get(priority_str, Priority.medium)

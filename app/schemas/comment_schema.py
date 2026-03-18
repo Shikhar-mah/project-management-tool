@@ -12,6 +12,7 @@ class CommentCreate(BaseModel):
 class CommentResponse(BaseModel):
     id: UUID
     user_id: UUID
+    task_id: UUID
     comment: str
     created_at: datetime
 

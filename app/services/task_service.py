@@ -7,6 +7,8 @@ from app.repositories.project_repository import ProjectRepository
 from app.repositories.task_repository import TaskRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse
+from app.services.ai_service import generate_description
+from app.utils.enums import Status
 
 
 class TaskService:
@@ -35,7 +37,7 @@ class TaskService:
             )
 
         # if both of them passes, then add the task
-        new_task = Task(**task.model_dump())
+        new_task = Task(**task.model_dump(), status=Status.todo)
         return TaskResponse.model_validate(self.repo.create(new_task))
 
     def get_by_id(self, task_id: UUID):
@@ -81,6 +83,27 @@ class TaskService:
             )
 
         return TaskResponse.model_validate(deleted_task)
+
+    """
+    Create a service that would assign the function with a description, 
+    and assign it with a priority
+    Steps to do it:
+    1. Fetch the task by task id
+    2. get the title
+    3. Generate the description from that title
+    4. it's better to create a function specifically for the task of updating the
+        the description
+    """
+    def description_generator(self, task_id: UUID):
+        task = self.get_by_id(task_id)
+        task_response = TaskResponse.model_validate(task)
+        task_response.description = generate_description(task_response.title)
+
+        self.update(task_id, task_response)
+
+
+
+
 
 
     # for changing model to schema for better databases practices
