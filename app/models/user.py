@@ -3,6 +3,7 @@ import uuid
 
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import backref, relationship
 
 from app.db import Base
 
@@ -13,3 +14,10 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    tasks = relationship(
+        "Task",
+        backref="user",
+        cascade="all, delete",
+        passive_deletes=True
+    )

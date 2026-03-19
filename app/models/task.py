@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.db import Base
 from app.utils.enums import Status, Priority
@@ -15,6 +16,13 @@ class Task(Base):
     description = Column(Text, nullable=True)
     status = Column(Enum(Status), nullable=False)
     priority = Column(Enum(Priority), nullable=True)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"))
-    assignee_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"))
+    assignee_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    comments = relationship(
+        "Comment",
+        backref="task",
+        cascade="all, delete",
+        passive_deletes=True
+    )

@@ -42,6 +42,15 @@ def suggest_priority(title: str, description: str) -> Priority:
                 "content": f"""
                 Title: {title}
                 Description: {description}
+                
+                if there is a bug, login problems, or any other issue which might be
+                affecting the user experience -> add it to HIGH priority
+                
+                if there is any new improvement or any new feature that is needed to be
+                implemented -> add it to MEDIUM priority
+                
+                if it's something miscelleneous something that don't seen urgent and
+                will not cause any immediate issue -> add it to LOW priority
 
                 Assign priority: LOW, MEDIUM, or HIGH.
                 Return ONLY the word.

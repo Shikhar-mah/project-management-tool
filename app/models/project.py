@@ -4,6 +4,7 @@ import uuid
 
 from sqlalchemy import Column, String, DateTime, Text
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.db import Base
 
@@ -15,3 +16,10 @@ class Project(Base):
     name = Column(String, nullable=False, index=True)
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    tasks = relationship(
+        "Task",
+        backref="project",
+        cascade="all, delete",
+        passive_deletes=True
+    )
