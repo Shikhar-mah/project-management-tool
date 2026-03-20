@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+from datetime import datetime
 
 BASE_URL = "http://localhost:8000"
 
@@ -35,6 +36,7 @@ def delete(url):
 projects = safe_get("/projects")
 users = safe_get("/users")
 tasks = safe_get("/tasks")
+comments = safe_get("/comments")  # fetch all comments
 
 user_map = {u["name"]: u["id"] for u in users}
 user_reverse = {u["id"]: u["name"] for u in users}
@@ -224,12 +226,71 @@ with tab3:
                         unsafe_allow_html=True
                     )
 
+                    # ----- Display comments for this task (chat style) -----
+                    task_comments = [c for c in comments if c["task_id"] == task["id"]]
+                    if task_comments:
+                        st.markdown("**💬 Comments:**")
+                        # Sort comments by created_at (oldest first)
+                        task_comments.sort(key=lambda x: x.get("created_at", ""))
+                        for c in task_comments:
+                            user_name = user_reverse.get(c["user_id"], "Unknown")
+                            time_str = ""
+                            if c.get("created_at"):
+                                try:
+                                    dt = datetime.fromisoformat(c["created_at"].replace('Z', '+00:00'))
+                                    time_str = dt.strftime("%Y-%m-%d %H:%M")
+                                except:
+                                    time_str = ""
+                            # Simple chat bubble effect
+                            st.markdown(f"""
+                                <div style="background-color: #f0f2f6; padding: 8px; border-radius: 10px; margin: 5px 0;">
+                                    <b>{user_name}</b> <span style="color: gray; font-size: 0.8em;">{time_str}</span><br>
+                                    {c['comment']}
+                                </div>
+                            """, unsafe_allow_html=True)
+                    # ------------------------------------------
+
                     new_status = st.selectbox(
                         "Status",
                         ["TODO", "IN PROGRESS", "COMPLETED"],
                         index=["TODO", "IN PROGRESS", "COMPLETED"].index(task["status"]),
                         key=f"status_{task['id']}"
                     )
+
+                    # ----- Add comment section -----
+                    st.markdown("##### ➕ Add comment")
+                    col_a, col_b = st.columns([3, 1])
+                    with col_a:
+                        comment_user = st.selectbox(
+                            "User",
+                            ["Select User"] + [u["name"] for u in users],
+                            key=f"comment_user_{task['id']}"
+                        )
+                    with col_b:
+                        # empty for alignment
+                        pass
+                    comment_text = st.text_input(
+                        "Comment",
+                        key=f"comment_text_{task['id']}",
+                        placeholder="Write a comment..."
+                    )
+                    if st.button("Add Comment", key=f"add_comment_{task['id']}"):
+                        if comment_user == "Select User":
+                            st.warning("Please select a user")
+                        elif not comment_text.strip():
+                            st.warning("Comment cannot be empty")
+                        else:
+                            resp = post("/comments", {
+                                "task_id": task["id"],
+                                "user_id": user_map[comment_user],
+                                "comment": comment_text
+                            })
+                            if resp.status_code == 200:
+                                st.session_state.toast = "Comment added"
+                                st.rerun()
+                            else:
+                                st.warning("Failed to add comment")
+                    # --------------------------------
 
                     if new_status != task["status"]:
                         put(f"/task/{task['id']}", {"status": new_status})
