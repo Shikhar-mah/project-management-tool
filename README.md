@@ -138,6 +138,17 @@ The project is divided into backend and frontend components:
 * Streamlit-based UI dashboard
 
 ---
+## Deployment Links:
+### Backend Link:
+  ```
+  https://project-manager-backend-2e2v.onrender.com
+  ```
+  * For swagger documentation add `/docs` at the end.
+  ### Frontend Link:
+  ```
+  https://project-management-tool-frontend-g9v7wf7arudwmffze6y3vr.streamlit.app/
+  ```
+---
 
 ## 📌 Summary
 
